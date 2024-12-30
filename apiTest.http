@@ -1,9 +1,150 @@
-##Install https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+## Install https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+# @env = dev
+@env = dev
+
+@hostname = http://localhost
+@port = 4000
+@host = {{hostname}}:{{port}}
+@reset_token = ""
+@jwt_token = ""
+@user_id = ""
 
 ### Health check
-GET http://localhost:3001/api/health
+GET {{host}}/api/health
 
-### Health check
-GET http://localhost:3001/api/auth/test
+### Health Auth check
+GET {{host}}/api/auth/test
+
+### Register a new user
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "testuser@example.com",
+  "password": "password123",
+  "role": "Contributor"
+}
+
+### Login user
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "password123"
+}
+
+> {% 
+   const responseJson = JSON.parse(response.body);
+   client.global.set("jwt_token", responseJson.token); 
+%}
+
+### Get current user profile
+GET {{host}}/api/users/me
+Authorization: Bearer {{jwt_token}}
+Content-Type: application/json
+
+> {% 
+   const responseJson = JSON.parse(response.body);
+   client.global.set("user_id", responseJson.user._id); 
+%}
+
+### Get all users (Admin only)
+GET {{host}}/api/users/
+Authorization: Bearer {{admin_jwt_token}}
+Content-Type: application/json
+
+### Get user by ID (replace {{user_id}} with the actual ID)
+GET {{host}}/api/users/{{user_id}}
+Authorization: Bearer {{jwt_token}}
+Content-Type: application/json
+
+### Update user profile (self)
+PUT {{host}}/api/users/{{user_id}}
+Authorization: Bearer {{jwt_token}}
+Content-Type: application/json
+
+{
+  "name": "Updated Test User",
+  "email": "updatedemail@example.com"
+}
+
+### Delete user (Admin only)
+DELETE {{host}}/api/users/{{user_id}}
+Authorization: Bearer {{admin_jwt_token}}
+Content-Type: application/json
+
+### Login as Admin user (for admin operations)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "adminpassword"
+}
+
+> {% 
+   const responseJson = JSON.parse(response.body);
+   client.global.set("admin_jwt_token", responseJson.token); 
+%}
+
+### Forgot password
+POST {{host}}/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com"
+}
+
+### Reset password
+POST {{host}}/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "{{reset_token}}",
+  "password": "newpassword123"
+}
 
 
+### Get all recipes
+GET {{host}}/api/recipes
+Content-Type: application/json
+
+### Create a new recipe
+POST {{host}}/api/recipes
+Authorization: Bearer {{jwt_token}}
+Content-Type: application/json
+
+{
+  "title": "Delicious Pancakes",
+  "description": "Fluffy pancakes perfect for breakfast.",
+  "ingredients": [
+    { "name": "Flour", "quantity": "2 cups" },
+    { "name": "Milk", "quantity": "1.5 cups" },
+    { "name": "Eggs", "quantity": "2" }
+  ],
+  "instructions": "Mix ingredients and cook on a griddle.",
+  "category": "Breakfast",
+  "prepTime": 10,
+  "cookTime": 15,
+  "servings": 4
+}
+
+### Update a recipe
+PUT {{host}}/api/recipes/{{recipe_id}}
+Authorization: Bearer {{jwt_token}}
+Content-Type: application/json
+
+{
+  "description": "Even fluffier pancakes with extra ingredients.",
+  "prepTime": 15
+}
+
+### Delete a recipe
+DELETE {{host}}/api/recipes/{{recipe_id}}
+Authorization: Bearer {{jwt_token}}
+
+### Approve a recipe
+PATCH {{host}}/api/recipes/{{recipe_id}}/approve
+Authorization: Bearer {{admin_jwt_token}}

@@ -1,6 +1,8 @@
 const swaggerJSDocs = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const authRouteDocs = require("@docs/authDocs");
+const userRouteDocs = require("@docs/userDocs");
+const recipeRouteDocs = require("@docs/recipeDocs");
 
 const config = require("@config");
 
@@ -19,8 +21,26 @@ const options = {
         description: "Development server",
       },
     ],
-    tags: [{ name: "Auth", description: "Authorization and Authentication" }],
-    paths: { ...authRouteDocs },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+    tags: [
+      { name: "Auth", description: "Authorization and Authentication" },
+      { name: "Users", description: "User Management Endpoints" },
+      { name: "Recipes", description: "Recipe Management Endpoints" },
+    ],
+    paths: { ...authRouteDocs, ...userRouteDocs, ...recipeRouteDocs },
   },
   apis: ["@routes/**/*.js"],
 };
