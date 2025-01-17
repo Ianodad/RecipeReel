@@ -1,7 +1,7 @@
 // src/models/Recipe.js
 
 const mongoose = require("mongoose");
-
+const mongoosePaginate = require("mongoose-paginate-v2");
 const ingredientSchema = new mongoose.Schema({
   name: String,
   quantity: String,
@@ -46,5 +46,6 @@ const recipeSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+recipeSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model("Recipe", recipeSchema);

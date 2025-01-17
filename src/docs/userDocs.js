@@ -336,6 +336,137 @@ const updateUser = {
   },
 };
 
+const updateUserRole = {
+  tags: ["Users"],
+  description: "Update the role of a user by user ID (Admin only)",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      description: "ID of the user whose role is to be updated",
+      required: true,
+      schema: {
+        type: "string",
+      },
+      example: "12345",
+    },
+  ],
+  requestBody: {
+    required: true,
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            role: {
+              type: "string",
+              enum: ["Admin", "Contributor", "Viewer"],
+              description: "The new role for the user",
+              example: "Admin",
+            },
+          },
+          required: ["role"],
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: "User role updated successfully",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              status: { type: "string" },
+              message: { type: "string" },
+              data: {
+                type: "object",
+                properties: {
+                  id: { type: "string" },
+                  name: { type: "string" },
+                  email: { type: "string" },
+                  role: { type: "string" },
+                },
+              },
+            },
+            example: {
+              status: "success",
+              message: "User role updated successfully",
+              data: {
+                id: "12345",
+                name: "John Doe",
+                email: "john.doe@example.com",
+                role: "Admin",
+              },
+            },
+          },
+        },
+      },
+    },
+    400: {
+      description: "Invalid role or request body",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              status: { type: "string" },
+              message: { type: "string" },
+            },
+            example: {
+              status: "error",
+              message:
+                "Invalid role. Allowed roles are Admin, Contributor, Viewer.",
+            },
+          },
+        },
+      },
+    },
+    404: {
+      description: "User not found",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              status: { type: "string" },
+              message: { type: "string" },
+            },
+            example: {
+              status: "error",
+              message: "User not found",
+            },
+          },
+        },
+      },
+    },
+    401: {
+      description: "Unauthorized - missing or invalid token",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              status: { type: "string" },
+              message: { type: "string" },
+            },
+            example: {
+              status: "error",
+              message: "Invalid token or insufficient privileges",
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 const deleteUser = {
   tags: ["Users"],
   description: "Delete a user by ID (Admin or authorized role)",
@@ -425,6 +556,9 @@ const userRouteDocs = {
     get: getUserById,
     put: updateUser,
     delete: deleteUser,
+  },
+  "/api/users/{id}/role": {
+    patch: updateUserRole,
   },
 };
 

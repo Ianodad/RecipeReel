@@ -6,6 +6,7 @@ const {
   getAllRecipesController,
   getRecipeByIdController,
   createRecipeController,
+  getRecipesByUserController,
   updateRecipeController,
   deleteRecipeController,
   approveRecipeController,
@@ -23,7 +24,9 @@ const {
 router.get("/", getAllRecipesController);
 
 // Get recipe by ID
-router.get("/:id", getRecipeByIdController);
+// router.get("/:id", getRecipeByIdController);
+
+router.get("/user", authenticateJWT, getRecipesByUserController);
 
 // Create a new recipe (Authenticated users)
 router.post(

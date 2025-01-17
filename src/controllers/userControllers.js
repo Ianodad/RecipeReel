@@ -4,6 +4,7 @@ const {
   getAllUsersService,
   getUserByIdService,
   updateUserService,
+  updateUserRoleService,
   deleteUserService,
 } = require("@services/userServices");
 
@@ -52,6 +53,23 @@ const updateUserController = async (req, res, next) => {
   }
 };
 
+const updateUserRoleController = async (req, res, next) => {
+  try {
+    const { role } = req.body;
+    if (!["Admin", "Contributor", "Viewer"].includes(role)) {
+      return res.status(400).json({
+        message: "Invalid role. Allowed roles are Admin, Contributor, Viewer.",
+      });
+    }
+
+    const updatedUser = await updateUserRoleService(req.params.id, role);
+    res
+      .status(200)
+      .json({ message: "User role updated successfully", user: updatedUser });
+  } catch (error) {
+    next(error);
+  }
+};
 const deleteUserController = async (req, res, next) => {
   try {
     await deleteUserService(req.params.id);
@@ -66,5 +84,6 @@ module.exports = {
   getUserByIdController,
   getCurrentUserController,
   updateUserController,
+  updateUserRoleController,
   deleteUserController,
 };

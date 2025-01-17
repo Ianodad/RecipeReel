@@ -14,6 +14,18 @@ const updateUserValidation = celebrate({
     .min(1), // Require at least one field to update
 });
 
+const updateUserRoleValidation = celebrate({
+  [Segments.BODY]: Joi.object().keys({
+    role: Joi.string()
+      .valid("Admin", "Contributor", "Viewer")
+      .required()
+      .messages({
+        "any.only": "Role must be one of Admin, Contributor, Viewer",
+      }),
+  }),
+});
+
 module.exports = {
   updateUserValidation,
+  updateUserRoleValidation,
 };

@@ -32,6 +32,19 @@ const updateUserService = async (userId, updateData, requestingUser) => {
   return user;
 };
 
+const updateUserRoleService = async (userId, newRole) => {
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  user.role = newRole;
+  await user.save();
+
+  return user;
+};
+
 const deleteUserService = async (userId) => {
   return User.findByIdAndDelete(userId);
 };
@@ -40,5 +53,6 @@ module.exports = {
   getAllUsersService,
   getUserByIdService,
   updateUserService,
+  updateUserRoleService,
   deleteUserService,
 };

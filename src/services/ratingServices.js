@@ -3,7 +3,7 @@
 const Rating = require("@models/Rating");
 const Recipe = require("@models/Recipe");
 
-exports.addOrUpdateRating = async (ratingData, user) => {
+const addOrUpdateRatingService = async (ratingData, user) => {
   const { recipeId, value, comment } = ratingData;
 
   // Validate the recipe exists and is approved
@@ -43,13 +43,13 @@ exports.addOrUpdateRating = async (ratingData, user) => {
   return rating;
 };
 
-exports.getRatingsByRecipe = async (recipeId) => {
+const getRatingsByRecipeService = async (recipeId) => {
   return Rating.find({ recipe: recipeId })
     .populate("user", "name")
     .sort("-createdAt");
 };
 
-exports.deleteRating = async (recipeId, user) => {
+const deleteRatingService = async (recipeId, user) => {
   const rating = await Rating.findOneAndDelete({
     recipe: recipeId,
     user: user._id,
@@ -71,4 +71,10 @@ exports.deleteRating = async (recipeId, user) => {
   recipe.averageRating = averageRating;
   recipe.ratingsCount = ratings.length;
   await recipe.save();
+};
+
+module.exports = {
+  addOrUpdateRatingService,
+  getRatingsByRecipeService,
+  deleteRatingService,
 };

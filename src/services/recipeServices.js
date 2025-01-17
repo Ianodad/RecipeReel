@@ -3,7 +3,7 @@
 const Recipe = require("@models/Recipe");
 
 const getAllRecipesService = async (query) => {
-  const { search, category, sortBy, page = 1, limit = 10 } = query;
+  const { search, category, sortBy, page = 1, limit = 10 } = query || {};
 
   const filter = { status: "approved" };
 
@@ -31,6 +31,15 @@ const getAllRecipesService = async (query) => {
 
 const getRecipeByIdService = async (recipeId) => {
   return Recipe.findById(recipeId)
+    .populate("createdBy", "name")
+    .where("status")
+    .equals("approved");
+};
+
+//create a getRecipesByUserService that take user id adn rertuns all recipe created by user 
+
+const getRecipesByUserService = async (userId) => {
+  return Recipe.find({ createdBy: userId })
     .populate("createdBy", "name")
     .where("status")
     .equals("approved");
@@ -95,6 +104,7 @@ module.exports = {
   getAllRecipesService,
   getRecipeByIdService,
   createRecipeService,
+  getRecipesByUserService,
   updateRecipeService,
   deleteRecipeService,
   approveRecipeService,
