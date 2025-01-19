@@ -20,11 +20,7 @@ exports.authenticateJWT = async (req, res, next) => {
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      req.user = {
-        id: user._id,
-        name: user.name,
-        role: user.role,
-      };
+      req.user = user;
       next();
     } catch (error) {
       console.error("JWT Verification Error:", error.message);

@@ -26,7 +26,10 @@ const getAllRecipesService = async (query) => {
   }
 
   const recipes = await Recipe.paginate(filter, options);
-  return recipes;
+  return {
+    ...recipes,
+    totalPages: Math.ceil(recipes.totalDocs / limit),
+  };
 };
 
 const getRecipeByIdService = async (recipeId) => {
@@ -36,20 +39,22 @@ const getRecipeByIdService = async (recipeId) => {
     .equals("approved");
 };
 
-//create a getRecipesByUserService that take user id adn rertuns all recipe created by user 
+//create a getRecipesByUserService that take user id adn rertuns all recipe created by user
 
 const getRecipesByUserService = async (userId) => {
   return Recipe.find({ createdBy: userId })
+    .sort({ createdAt: -1 })
     .populate("createdBy", "name")
     .where("status")
     .equals("approved");
 };
 
 const createRecipeService = async (recipeData, user) => {
+  console.log(recipeData, user);
   const recipe = new Recipe({
     ...recipeData,
     createdBy: user._id,
-    status: user.role === "Admin" ? "approved" : "pending",
+    status: user.role === "Admin" ? "approved" : "approved",
   });
   return recipe.save();
 };
@@ -86,7 +91,16 @@ const deleteRecipeService = async (recipeId, user) => {
     throw new Error("Unauthorized to delete this recipe");
   }
 
-  return recipe.remove();
+  await Recipe.deleteOne({ _id: recipeId });
+  return { message: "Recipe deleted successfully" };
+};
+
+// add a controller that  get featured recipe
+
+const getFeaturedRecipesService = async () => {
+  return Recipe.find({ isFeatured: true })
+    .populate("createdBy", "name")
+    .sort({ createdAt: -1 });
 };
 
 const approveRecipeService = async (recipeId) => {
@@ -108,4 +122,5 @@ module.exports = {
   updateRecipeService,
   deleteRecipeService,
   approveRecipeService,
+  getFeaturedRecipesService,
 };

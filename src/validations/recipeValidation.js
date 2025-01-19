@@ -5,6 +5,7 @@ const { celebrate, Joi, Segments } = require("celebrate");
 const ingredientSchema = Joi.object({
   name: Joi.string().required(),
   quantity: Joi.string().required(),
+  unit: Joi.string().required(),
 });
 
 const createRecipeValidation = celebrate({
@@ -17,6 +18,7 @@ const createRecipeValidation = celebrate({
     prepTime: Joi.number().optional(),
     cookTime: Joi.number().optional(),
     servings: Joi.number().optional(),
+    image: Joi.string().optional(),
   }),
 });
 
@@ -30,6 +32,7 @@ const updateRecipeValidation = celebrate({
     prepTime: Joi.number().optional(),
     cookTime: Joi.number().optional(),
     servings: Joi.number().optional(),
+    image: Joi.string().optional(),
   }),
 });
 

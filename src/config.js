@@ -17,6 +17,10 @@ const config = {
   emailFrom: process.env["EMAIL_FROM"],
   clientUrl: process.env["CLIENT_URL"],
 
+  cloudinaryCloudName: process.env["CLOUDINARY_CLOUD_NAME"],
+  cloudinaryApiKey: process.env["CLOUDINARY_API_KEY"],
+  cloudinaryApiSecret: process.env["CLOUDINARY_API_SECRET"],
+
   clientOrigins: {
     test: process.env["DEV_ORIGIN"] ?? "*",
     development: process.env["DEV_ORIGIN"] ?? "*",

@@ -13,8 +13,8 @@ const {
 const getAllRecipesController = async (req, res, next) => {
   console.log("req.query", req.query);
   try {
-    const recipes = await getAllRecipesService(req.query);
-    res.status(200).json({ recipes });
+    const { docs, ...rest } = await getAllRecipesService(req.query);
+    res.status(200).json({ recipes: docs, totalPages: rest.totalPages });
   } catch (error) {
     next(error);
   }
@@ -45,10 +45,12 @@ const getRecipesByUserController = async (req, res, next) => {
 };
 
 const createRecipeController = async (req, res, next) => {
+  console.log("req.body", req.body);
   try {
     const recipe = await createRecipeService(req.body, req.user);
     res.status(201).json({ message: "Recipe created successfully", recipe });
   } catch (error) {
+    console.log("error", error);
     next(error);
   }
 };

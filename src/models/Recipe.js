@@ -5,6 +5,7 @@ const mongoosePaginate = require("mongoose-paginate-v2");
 const ingredientSchema = new mongoose.Schema({
   name: String,
   quantity: String,
+  unit: String,
 });
 
 const recipeSchema = new mongoose.Schema(
@@ -20,6 +21,7 @@ const recipeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    image: String,
     category: String,
     prepTime: Number, // in minutes
     cookTime: Number, // in minutes
@@ -31,7 +33,7 @@ const recipeSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["pending", "approved", "removed"],
-      default: "pending",
+      default: "approved",
     },
     averageRating: {
       type: Number,

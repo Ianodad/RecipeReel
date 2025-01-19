@@ -15,6 +15,9 @@ const {
   authenticateJWT,
   authorizeRoles,
 } = require("@middleware/authMiddleware");
+
+const { upload } = require("@middleware/cloudinaryUploadMiddleware");
+
 const {
   createRecipeValidation,
   updateRecipeValidation,
